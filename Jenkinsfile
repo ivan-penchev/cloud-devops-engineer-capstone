@@ -4,22 +4,23 @@ pipeline {
     agent any
 
     stages {
-	    stage('Application Lint & Test') {
-            agent {
-                docker { 
-                    image 'python:3.7-stretch' 
-                   
+	    stage('Application Lint') {
+			   steps {
+                script {
+                    docker.image('hadolint/hadolint:latest-debian').inside() {
+                            sh 'hadolint ./application-light/Dockerfile | tee -a hadolint.txt'
+                            sh '''
+                                lintErrors=$(stat --printf="%s"  hadolint.txt)
+                                if [ "$lintErrors" -gt "0" ]; then
+                                    echo "Errors linting Dockerfile"
+                                    cat hadolint.txt
+                                    exit 1
+                                else
+                                    echo "Done linting Dockerfile"
+                                fi
+                            '''
+                    }
                 }
-            }
-            steps {
-			script {
-				sh 'sudo -s'
-                sh 'make setup install'
-                sh 'make lint-python'
-				sh 'make lint-docker'
-                sh 'make lint-html'
-                sh 'make test'
-				}
             }
         }
 
