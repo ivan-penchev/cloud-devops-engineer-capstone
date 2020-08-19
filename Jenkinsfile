@@ -46,7 +46,7 @@ pipeline {
             steps {
                 dir('infrastructure-as-code/kubernetes') {
                     withAWS(credentials: 'aws-credentials', region: 'eu-central-1') {
-							sh 'kubectl config use-context arn:aws:eks:eu-central-1:271285556254:cluster/CapstoneEKSDev'
+                            sh 'aws eks --region eu-central-1 update-kubeconfig --name CapstoneEKSDev'
                             sh 'kubectl apply -f k8s.yaml'
                         }
                     }
