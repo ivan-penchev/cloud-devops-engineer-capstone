@@ -1,24 +1,30 @@
-### BUILD STAGE
-FROM node:13.12.0-alpine AS build
-WORKDIR /usr/src/app
+# Stage 1
+
+# official image
+FROM node:13.12.0-alpine as build
+
+# set working directory
+WORKDIR /app
+
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
+# dependencies
 COPY package.json ./
-RUN npm install
-COPY . .
-RUN npm install -g @angular/cli@latest
-RUN ng build --prod  --deploy-url 'covid19/'
-RUN mkdir dist/covid19/covid19
-RUN cp dist/covid19/*.js dist/covid19/covid19/
-RUN cp dist/covid19/favicon.ico dist/covid19/covid19/
-RUN cp dist/covid19/*.css dist/covid19/covid19/
-RUN cp -r dist/covid19/assets/ dist/covid19/covid19/
+COPY package-lock.json ./
+RUN npm install --silent
 
-### WEB SERVER STAGE
-FROM nginx:1.17.9-alpine
+# application
+COPY . ./
 
-COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./docker/nginx.conf /etc/nginx/conf.d/
+# build
+RUN npm run lint
+#RUN CI=true npm test
+RUN npm run build
 
-RUN rm -rf /usr/share/nginx/html/*
+# Stage 2 - the production environment
 
-COPY  --from=build /usr/src/app/dist/covid19 /usr/share/nginx/html
-
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
