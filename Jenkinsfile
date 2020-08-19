@@ -41,6 +41,54 @@ pipeline {
                 }
             }
         }
+		
+		stage('Apply deployment') {
+            steps {
+                dir('infrastructure-as-code/kubernetes') {
+                    withAWS(credentials: 'aws-credentials', region: 'eu-central-1') {
+                            sh 'kubectl apply -f k8s.yaml'
+                        }
+                    }
+            }
+        }
+		
+		stage('Update deployment image') {
+            steps {
+                dir('kubernetes') {
+                    withAWS(credentials: 'aws-credentials', region: 'eu-central-1') {
+                            sh "kubectl set image deployments/capstone capstone=ivanspenchev/udacity-devops:${BUILD_NUMBER}"
+                        }
+                    }
+            }
+        }
+		
+		stage('Wait for pods to update') {
+            steps {
+                withAWS(credentials: 'aws-credentials', region: 'eu-central-1') {
+                    sh '''
+                        ATTEMPTS=0
+                        ROLLOUT_STATUS_CMD="kubectl rollout status deployment/capstone"
+                        until $ROLLOUT_STATUS_CMD || [ $ATTEMPTS -eq 60 ]; do
+                            $ROLLOUT_STATUS_CMD
+                            ATTEMPTS=$((attempts + 1))
+                            sleep 10
+                        done
+                    '''
+                }
+            }
+        }
+		
+		stage('Post deployment test') {
+            steps {
+                withAWS(credentials: 'aws-credentials', region: 'eu-central-1') {
+                    sh '''
+                        HOST=$(kubectl get service service-capstone | grep 'amazonaws.com' | awk '{print $4}')
+                        curl $HOST -f
+                    '''
+                }
+            }
+        }
+
 
         stage("Prune docker") {
             steps {
