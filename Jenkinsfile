@@ -8,11 +8,12 @@ pipeline {
             agent {
                 docker { 
                     image 'python:3.7-stretch' 
-                    args '--user root'
+                   
                 }
             }
             steps {
 			script {
+				sh 'sudo -s'
                 sh 'make setup install'
                 sh 'make lint-python'
 				sh 'make lint-docker'
