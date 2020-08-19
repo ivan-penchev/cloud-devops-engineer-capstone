@@ -27,8 +27,9 @@ pipeline {
         stage('Download data frame') {
             steps {
                 script {
+                    sh "chmod 777 -R ${env.WORKSPACE}"
                     dir("application") {
-                        sh "chmod 777 -R ${env.WORKSPACE}"
+                        sh "ls -la"
                         sh './scripts/get_data.sh'
                     }
                 }
