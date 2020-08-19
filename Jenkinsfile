@@ -28,9 +28,9 @@ pipeline {
             steps {
                 script {
                     sh "chmod 777 -R ${env.WORKSPACE}"
-                    dir("application") {
+                    dir("application/scripts") {
                         sh "ls -la"
-                        sh './scripts/get_data.sh'
+                        sh './get_data.sh'
                     }
                 }
             }
