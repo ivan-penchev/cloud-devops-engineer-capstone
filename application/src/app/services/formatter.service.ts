@@ -14,7 +14,7 @@ export class FormatterService {
     activeRegions = ['France', 'Iran', 'US', 'Spain', 'Italy'];
 
     // Transform string date month/day/year to Date
-    formatDate(mmddYY: String): Date {
+    formatDate(mmddYY: string): Date {
         const MM_DD_YY = mmddYY.split('/');
         const mm = MM_DD_YY[0];
         const dd = MM_DD_YY[1];

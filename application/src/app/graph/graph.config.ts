@@ -24,17 +24,10 @@ export class GraphConfig {
         }
     };
 
-    // events
-    public chartClicked(e: any): void {
-        console.log(e);
-    }
+ 
 
-    public chartHovered(e: any): void {
-        console.log(e);
-    }
-
-    public lineChartLegend: boolean = true;
-    public lineChartType: string = 'line';
+    public lineChartLegend = true;
+    public lineChartType = 'line';
     public lineChartColors = [
         { // default blue
             backgroundColor: 'rgb(141, 206, 242, 0)',
@@ -159,4 +152,12 @@ export class GraphConfig {
             pointHoverBorderColor: 'rgba(77,83,96,1)'
         },
     ];
+       // events
+    public chartClicked(e: any): void {
+        console.log(e);
+    }
+
+    public chartHovered(e: any): void {
+        console.log(e);
+    }
 }

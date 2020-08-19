@@ -24,7 +24,7 @@ export class MapperService {
     }
 
     // Map csv content into Regions
-    mapCsvToRegions(csv: String): Region[] {
+    mapCsvToRegions(csv: string): Region[] {
         const lines = csv.split('\n');
         const regions: Region[] = [];
         for (let i = 1; i < lines.length - 1; i++) {
@@ -34,7 +34,7 @@ export class MapperService {
     }
 
     // Return all dates from csv header
-    mapCsvToDates(csv: String): Date[] {
+    mapCsvToDates(csv: string): Date[] {
         const header = csv.split('\n')[0];
         const dates = header.split(',').slice(4, header.length);
         return dates.map((d) => this.formatterService.formatDate(d.toString()));

@@ -61,8 +61,8 @@ export class GraphComponent implements OnInit {
 
 
     public addRegion(selection) {
-        const region = this.regions.find(region => region.name === selection);
-        this.lineChartData.push({data: region.values, label: region.name, hidden: false});
+        const region2 = this.regions.find(region => region.name === selection);
+        this.lineChartData.push({data: region2.values, label: region2.name, hidden: false});
         this.graphConfig.lineChartColors.push(this.graphConfig.lineChartColors[this.lineChartData.length]);
     }
 
