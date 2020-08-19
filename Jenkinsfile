@@ -46,6 +46,7 @@ pipeline {
             steps {
                 dir('infrastructure-as-code/kubernetes') {
                     withAWS(credentials: 'aws-credentials', region: 'eu-central-1') {
+							sh 'kubectl config use-context arn:aws:eks:eu-central-1:271285556254:cluster/CapstoneEKSDev'
                             sh 'kubectl apply -f k8s.yaml'
                         }
                     }
@@ -54,7 +55,7 @@ pipeline {
 		
 		stage('Update deployment image') {
             steps {
-                dir('kubernetes') {
+                dir('infrastructure-as-code/kubernetes') {
                     withAWS(credentials: 'aws-credentials', region: 'eu-central-1') {
                             sh "kubectl set image deployments/capstone capstone=ivanspenchev/udacity-devops:${BUILD_NUMBER}"
                         }
